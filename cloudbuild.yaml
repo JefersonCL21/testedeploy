@@ -18,11 +18,12 @@ steps:
 
   # 2. Fazer o deploy no Cloud Run
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: 'gcloud'
     args:
       [
         'run',
         'deploy',
-        'meu-streamlit-app', # Nome do serviço no Cloud Run
+        'meu-streamlit-app', 
         '--image',
         'us-central1-docker.pkg.dev/$PROJECT_ID/meu-repo/meu-streamlit-app:$SHORT_SHA',
         '--region',
@@ -36,4 +37,4 @@ images:
   - 'us-central1-docker.pkg.dev/$PROJECT_ID/meu-repo/meu-streamlit-app:$SHORT_SHA'
 
 options:
-  logging: CLOUD_LOGGING_ONLY   
+  logging: CLOUD_LOGGING_ONLY
