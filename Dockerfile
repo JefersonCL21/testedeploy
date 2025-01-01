@@ -13,8 +13,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copia o restante dos arquivos para dentro do container
 COPY . .
 
-# Expõe a porta padrão do Streamlit (8501)
-EXPOSE 8501
+# Opcional: documentar a porta 8080 (Cloud Run usará automaticamente a variável $PORT)
+EXPOSE 8080
 
-# Comando para rodar a aplicação
-CMD ["streamlit", "run", "app.py", "--server.port=8501", "--server.address=0.0.0.0"]
+# Comando para rodar a aplicação, agora lendo a porta a partir de $PORT
+CMD ["streamlit", "run", "app.py", "--server.port=$PORT", "--server.address=0.0.0.0"]
