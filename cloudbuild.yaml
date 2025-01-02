@@ -1,5 +1,5 @@
 steps:
-  # 1. Fazer build da imagem Docker e enviar para o Artifact Registry
+  # 1. Fazer build da imagem Docker
   - name: 'gcr.io/cloud-builders/docker'
     args:
       [
@@ -9,6 +9,7 @@ steps:
         '.'
       ]
 
+  # 2. Enviar a imagem para o Artifact Registry
   - name: 'gcr.io/cloud-builders/docker'
     args:
       [
@@ -16,25 +17,34 @@ steps:
         'us-central1-docker.pkg.dev/$PROJECT_ID/meu-repo/meu-streamlit-app:$SHORT_SHA'
       ]
 
-  # 2. Fazer o deploy no Cloud Run
+  # 3. Fazer o deploy no Cloud Run com tag 'test' e sem passar tráfego
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: 'gcloud'
     args:
       [
         'run',
         'deploy',
-        'meu-streamlit-app', 
+        'meu-streamlit-app',
         '--image',
         'us-central1-docker.pkg.dev/$PROJECT_ID/meu-repo/meu-streamlit-app:$SHORT_SHA',
         '--region',
         'us-central1',
         '--platform',
         'managed',
-        '--allow-unauthenticated'
+        '--no-traffic',  # Não direcionar tráfego automaticamente
+        '--tag',
+        'test',           # Tag para identificar como revisão de teste
+        '--allow-unauthenticated',
+        '--memory',
+        '2Gi',            # Configurar 2 GB de memória
+        '--cpu',
+        '2'               # Configurar 2 CPUs
       ]
 
+# Registrar a imagem gerada
 images:
   - 'us-central1-docker.pkg.dev/$PROJECT_ID/meu-repo/meu-streamlit-app:$SHORT_SHA'
 
+# Configurar logs apenas para o Cloud Logging
 options:
   logging: CLOUD_LOGGING_ONLY
